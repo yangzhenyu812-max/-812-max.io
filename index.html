@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="个人作品集——科技简洁风，含高性能白色粒子背景" />
+  <title>个人作品集 · 科技简洁风</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            accent: '#00CFE8',
+            purple: '#7B61FF',
+            dark: '#0B1220',
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(22, 93, 255, 0.25), transparent 60%),
+        radial-gradient(900px 500px at 80% -10%, rgba(0, 207, 232, 0.20), transparent 60%),
+        linear-gradient(#0B1220, #0B1220);
+    }
+
+    /* 轻微网格纹理 */
+    .grid-overlay::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 1));
+    }
+
+    /* 背景粒子画布 */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* 卡片基础样式 */
+    .card {
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+      /* 按钮悬停：缩放1.2倍 + 向后倾斜15度 + 阴影 */
+      .btn-tilt { transform: translateZ(0); backface-visibility: hidden; will-change: transform, box-shadow; transition: transform 0.3s ease, box-shadow 0.3s ease; transform-style: preserve-3d; }
+      .btn-tilt:hover { transform: perspective(800px) rotateX(15deg) scale(1.2); box-shadow: 0 12px 24px rgba(0,0,0,0.35); }
+
+      /* 头像常亮边缘发光（纯CSS，加载即生效）*/
+      .avatar-glow { position: relative; display: inline-block; border-radius: var(--avatar-radius, 9999px); transform: translateZ(0); will-change: transform; transition: transform 0.25s ease; }
+      .avatar-glow:hover { transform: scale(1.1); }
+      .avatar-circle { --avatar-radius: 9999px; }
+      .avatar-square { --avatar-radius: 0px; }
+      .avatar-glow img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+      /* 使用伪元素 + box-shadow 形成仅沿轮廓的 2-3px 边缘与柔和外辉光 */
+      .avatar-glow::after {
+        content: '';
+        position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+        /* 2-3px 边缘，随屏幕尺寸轻微自适应 */
+        --ring-w: clamp(2px, 0.5vw, 3px);
+        --glow-blur: clamp(6px, 1.2vw, 10px);
+        box-shadow:
+          0 0 0 var(--ring-w) rgba(0, 255, 255, 0.9),
+          0 0 var(--glow-blur) rgba(0, 255, 255, 0.45);
+      }
+    </style>
+</head>
+
+<body class="text-white grid-overlay">
+  <!-- 背景粒子画布 -->
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- 顶部导航 -->
+    <header class="fixed top-0 left-0 right-0 z-30 bg-dark/70 backdrop-blur border-b border-white/10 h-20">
+      <div class="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
+      <a href="#home" class="font-semibold tracking-wide">Portfolio</a>
+      <nav class="hidden md:flex gap-6">
+        <a href="#home" class="hover:text-accent transition">首页</a>
+        <a href="#about" class="hover:text-accent transition">关于我</a>
+        <a href="#interests" class="hover:text-accent transition">兴趣</a>
+        <a href="#contact" class="hover:text-accent transition">联系</a>
+      </nav>
+    </div>
+  </header>
+
+    <main class="max-w-6xl mx-auto px-4 pt-[80px] pb-16 space-y-12">
+    <!-- 头像与标题（居中） -->
+      <section id="home" class="min-h-[calc(100vh-80px)] flex flex-col items-center justify-center text-center gap-6">
+        <div class="avatar-glow avatar-circle relative w-32 h-32">
+          <img src="tupian/1757552435452qa0rxa3j.jpg" alt="avatar" />
+        </div>
+      <div class="max-w-[60vw] sm:max-w-[80vw] md:max-w-[60vw] mx-auto">
+        <h1 class="text-3xl md:text-4xl font-bold">你好，我是前端工程师杨宇</h1>
+        <p class="mt-2 text-white/70">科技简洁风个人作品集页面。</p>
+      </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section id="about" class="card rounded-xl p-6">
+      <h2 class="text-2xl font-semibold">关于我</h2>
+      <p class="mt-2 text-white/70">专注前端开发多年，精通 HTML5 语义化布局、CSS3 动画与响应式设计，熟练运用 JavaScript（ES6+）及 Vue/React 框架构建高可用应用，深耕用户体验优化与前端工程化实践，擅长通过 Webpack/Vite 构建工具、Git 版本控制及性能调优手段，打造兼顾美观性、流畅度与可维护性的多端产品，始终紧跟技术趋势，持续沉淀高效开发解决方案。</p>
+    </section>
+
+    <!-- 兴趣卡片 -->
+    <section id="interests">
+      <h2 class="text-2xl font-semibold mb-4">兴趣爱好</h2>
+      <div class="grid md:grid-cols-4 gap-4">
+          <div class="card rounded-xl p-5 btn-tilt">
+          <div class="text-xl font-medium flex items-center gap-2"><i class="fa-solid fa-code"></i> 编程</div>
+          <p class="mt-2 text-white/70">构建世界，打磨体验。</p>
+        </div>
+          <div class="card rounded-xl p-5 btn-tilt">
+          <div class="text-xl font-medium flex items-center gap-2"><i class="fa-solid fa-camera"></i> 摄影</div>
+          <p class="mt-2 text-white/70">记录生活与城市温度。</p>
+        </div>
+          <div class="card rounded-xl p-5 btn-tilt">
+          <div class="text-xl font-medium flex items-center gap-2"><i class="fa-solid fa-bicycle"></i> 骑行</div>
+          <p class="mt-2 text-white/70">在路上思考，自由。</p>
+        </div>
+          <div class="card rounded-xl p-5 btn-tilt">
+          <div class="text-xl font-medium flex items-center gap-2"><i class="fa-solid fa-robot"></i> AI/探索</div>
+          <p class="mt-2 text-white/70">关注新技术的边界与可能。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section id="contact" class="card rounded-xl p-6">
+      <h2 class="text-2xl font-semibold">联系我</h2>
+      <div class="mt-3 flex gap-4">
+        <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-github"></i> GitHub</a>
+        <a href="#" class="hover:text-accent transition"><i class="fa-solid fa-envelope"></i> Email</a>
+        <a href="#" class="hover:text-accent transition"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 py-6 text-center text-white/60">© 2025 Your Name</footer>
+
+  <!-- 性能监控与画质设置面板 -->
+  <div id="perfPanel"
+    class="fixed bottom-4 right-4 z-40 card rounded-xl p-3 text-sm text-white/80 flex items-center gap-3">
+    <span id="fpsLabel">FPS: --</span>
+    <label class="flex items-center gap-2">
+      <span>画质</span>
+      <select id="qualitySelect" class="bg-transparent border border-white/20 rounded px-2 py-1 focus:outline-none">
+        <option value="auto" selected>自动</option>
+        <option value="high">高</option>
+        <option value="medium">中</option>
+        <option value="low">低</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- 粒子系统（对象池 + 动态LOD + FPS监控） -->
+  <script>
+    (function () {
+      const canvas = document.getElementById('bgCanvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      let width = 0, height = 0;
+
+      // 设备能力判断（低端设备默认低画质或禁用高级效果）
+      const isLowEnd = (navigator.hardwareConcurrency || 4) <= 4 || /mobi|android|ios/i.test(navigator.userAgent) || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // 画质配置
+      const QUALITY = {
+        high: { count: 1000, glow: true, speed: [25, 70] },
+        medium: { count: 700, glow: true, speed: [20, 60] },
+        low: { count: 400, glow: false, speed: [15, 45] }
+      };
+      // 默认使用自动模式；低端设备仅关闭发光，而不是强制最低画质
+      let qualityMode = 'low';
+
+      const MAX_POOL = 1500; // 对象池容量
+      const sizeMin = 1, sizeMax = 5; // 粒子大小
+      const lifeMin = 3, lifeMax = 5; // 秒
+
+      const pool = new Array(MAX_POOL).fill(0).map(() => ({ active: false, x: 0, y: 0, vx: 0, vy: 0, r: 1, life: 4, age: 0, alpha: 0.8 }));
+      let activeCount = 0;
+      let targetCount = (qualityMode === 'auto') ? QUALITY.medium.count : QUALITY[qualityMode].count;
+      let speedRange = (qualityMode === 'auto') ? QUALITY.medium.speed : QUALITY[qualityMode].speed;
+      let enableGlow = (qualityMode === 'auto') ? QUALITY.medium.glow : QUALITY[qualityMode].glow;
+
+      // UI 控件
+      const fpsLabel = document.getElementById('fpsLabel');
+      const qualitySelect = document.getElementById('qualitySelect');
+      if (qualitySelect) {
+        qualitySelect.value = qualityMode;
+        qualitySelect.addEventListener('change', (e) => {
+          qualityMode = e.target.value;
+          applyQuality(qualityMode);
+          // 强制刷新目标数量
+          targetCount = (qualityMode === 'auto') ? QUALITY.medium.count : QUALITY[qualityMode].count;
+        });
+      }
+
+      function applyQuality(mode) {
+        const cfg = (mode === 'auto') ? QUALITY.medium : QUALITY[mode];
+        speedRange = cfg.speed;
+        enableGlow = cfg.glow && !isLowEnd; // 低端设备强制禁用高级效果
+      }
+
+      function resize() {
+        width = canvas.width = Math.floor(window.innerWidth * dpr);
+        height = canvas.height = Math.floor(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.imageSmoothingEnabled = true;
+      }
+
+      function rand(a, b) { return a + Math.random() * (b - a); }
+
+      function spawnInto(i) {
+        const p = pool[i];
+        const angle = Math.random() * Math.PI * 2;
+        const speed = rand(speedRange[0], speedRange[1]);
+        p.x = Math.random() * window.innerWidth;
+        p.y = Math.random() * window.innerHeight;
+        p.vx = Math.cos(angle) * speed;
+        p.vy = Math.sin(angle) * speed;
+        p.r = rand(sizeMin, sizeMax);
+        p.life = rand(lifeMin, lifeMax);
+        p.age = 0;
+        p.alpha = 0.85;
+        p.active = true;
+      }
+
+      function ensureTargetCount(step = 20) {
+        if (activeCount < targetCount) {
+          const toAdd = Math.min(step, targetCount - activeCount);
+          for (let i = activeCount; i < activeCount + toAdd; i++) spawnInto(i);
+          activeCount += toAdd;
+        } else if (activeCount > targetCount) {
+          const toRemove = Math.min(step, activeCount - targetCount);
+          for (let i = activeCount - toRemove; i < activeCount; i++) pool[i].active = false;
+          activeCount -= toRemove;
+        }
+      }
+
+      function drawParticle(p) {
+        if (enableGlow) {
+          ctx.shadowColor = `rgba(255,255,255,${Math.min(0.6, p.alpha)})`;
+          ctx.shadowBlur = 8;
+          ctx.globalCompositeOperation = 'lighter';
+        } else {
+          ctx.shadowBlur = 0;
+          ctx.globalCompositeOperation = 'source-over';
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${p.alpha})`;
+        ctx.fill();
+      }
+
+      // FPS 监控与动态 LOD
+      let last = performance.now();
+      const STARTUP_GRACE_MS = 3000; // 启动缓冲期，避免刚加载就降级
+      const startTime = performance.now();
+      let rafId = null;
+      let fps = 60;
+      let lastFrameMs = performance.now();
+      let under30Frames = 0, over55Frames = 0;
+
+      function step(dt) {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ensureTargetCount();
+        for (let i = 0; i < activeCount; i++) {
+          const p = pool[i];
+          if (!p.active) continue;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.age += dt;
+
+          if (p.x < -10) p.x = window.innerWidth + 10;
+          if (p.y < -10) p.y = window.innerHeight + 10;
+          if (p.x > window.innerWidth + 10) p.x = -10;
+          if (p.y > window.innerHeight + 10) p.y = -10;
+
+          p.alpha = 0.7 + Math.sin(p.age * 2) * 0.15;
+          if (p.age > p.life) { spawnInto(i); }
+          drawParticle(p);
+        }
+        ctx.globalCompositeOperation = 'source-over';
+      }
+
+      function animate(now) {
+        // 统一 30FPS：若不足33ms则跳过本帧
+        if (now - lastFrameMs < 33) { rafId = requestAnimationFrame(animate); return; }
+        const dt = Math.min(0.033, (now - last) / 1000);
+        last = now;
+        lastFrameMs = now;
+        fps = 1 / dt;
+        if (fpsLabel) fpsLabel.textContent = `FPS: ${Math.round(fps)}`;
+
+        // 动态 LOD：根据帧率自动调整（启动缓冲后再评估）
+        if (qualityMode === 'auto' && (now - startTime) >= STARTUP_GRACE_MS) {
+          if (fps < 30) under30Frames++; else under30Frames = Math.max(0, under30Frames - 1);
+          if (fps > 55) over55Frames++; else over55Frames = Math.max(0, over55Frames - 2);
+
+          if (under30Frames > 45) { // ~0.75s 低帧
+            // 降级质量
+            if (targetCount > QUALITY.low.count) {
+              targetCount = Math.max(QUALITY.low.count, targetCount - 150);
+            }
+            enableGlow = false; // 关闭发光以减负载
+            under30Frames = 0;
+          } else if (over55Frames > 180 && !isLowEnd) { // ~3s 高帧，缓慢升级
+            targetCount = Math.min(QUALITY.high.count, targetCount + 100);
+            enableGlow = true;
+            over55Frames = 0;
+          }
+        }
+
+        step(dt);
+        rafId = requestAnimationFrame(animate);
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) { cancelAnimationFrame(rafId); rafId = null; }
+        else if (!rafId) { last = performance.now(); rafId = requestAnimationFrame(animate); }
+      });
+
+      window.addEventListener('resize', resize);
+      resize();
+      // 初始采用低画质以降低负载与帧率
+      targetCount = QUALITY[qualityMode].count;
+      applyQuality(qualityMode);
+      // 逐步填充对象池而非一次性创建，避免瞬时卡顿
+      activeCount = 0;
+      rafId = requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+
+</html>
